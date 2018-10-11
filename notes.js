@@ -1,26 +1,33 @@
 
-const fs = require('fs');
+const fs = require('fs')
+
+let fetchNotes = () => {
+  try {
+    let notesString = fs.readFileSync('notes-data.json')
+    return JSON.parse(notesString)
+  } catch (e) {
+    return []
+  }
+}
+
+let saveNotes = (notes) => {
+  fs.writeFileSync('notes-data.json', JSON.stringify(notes))
+}
 
 let addNote = (title, body) => {
-  let notes = [];
+  let notes = fetchNotes()
 
   let note = {
     title,
     body
-  };
-
-  try {
-    let notesString = fs.readFileSync('notes-data.json');
-    notes = JSON.parse(notesString);
-  } catch (e) {
-
   }
 
-  let duplicateNotes = notes.filter( note => note.title === title)
-  
+  let duplicateNotes = notes.filter(note => note.title === title)
+
   if (duplicateNotes.length === 0) {
-    notes.push(note);
-    fs.writeFileSync('notes-data.json', JSON.stringify(notes))
+    notes.push(note)
+    saveNotes(notes)
+    return note
   } else {
     console.log('Duplicate notes title were detected.')
   }
@@ -35,7 +42,10 @@ let getNote = (title) => {
 }
 
 let removeNote = (title) => {
-  console.log('Removing note', title)
+  let notes = fetchNotes()
+  let filteredNotes = notes.filter(note => note.title !== title)
+  saveNotes(filteredNotes)
+  return notes.length !== filteredNotes.length
 }
 
 module.exports = {
