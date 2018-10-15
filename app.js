@@ -14,14 +14,29 @@ console.log(command)
 if (command === 'add') {
   let note = notes.addNote(argv.title, argv.body)
   if (_.hasIn(note, 'title')) {
-    console.log(note)
+    console.log('Note created')
+    notes.logNote(note)
   } else {
     console.log('Error: There was a error on adding your note. Try it again =)')
   }
 } else if (command === 'list') {
-  notes.getAll()
+  let allNotes = notes.getAll()
+  if (allNotes.length > 0) {
+    allNotes.forEach((note, index) => {
+      console.log(`Note Número ${index}`)
+      notes.logNote(note);
+    })
+  } else {
+    console.log('There is not no note in our database.')
+  }
 } else if (command === 'read') {
-  notes.getNote(argv.title)
+  let note = notes.getNote(argv.title)
+  if (note) {
+    console.log('Note Found')
+    notes.logNote(note)
+  } else {
+    console.log('Error: We could find your note :( Check the title again')
+  }
 } else if (command === 'remove') {
   let noteRemoved = notes.removeNote(argv.title)
   if (noteRemoved) {
